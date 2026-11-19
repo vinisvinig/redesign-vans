@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+</head>
+<body>
+<style>html,body{margin:0;padding:0}</style>
+<title>Vans Off The Wall</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;800&family=Permanent+Marker&display=swap">
+<style>
+/* Layout: cena fixada. 0–80% = timeline mestre (colagem com parallax → zoom no shape → Venice → marquee → quadriculado cobre).
+   80–100% = o quadriculado se desfaz e revela a vitrine. */
+:root{
+  --ink:#0d0d0d;
+  --paper:#f4f1ea;
+  --red:#d6201c;
+  --white:#fbfaf7;
+  --f-display:"Anton","Impact","Arial Narrow",sans-serif;
+  --f-body:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-hand:"Permanent Marker","Comic Sans MS",cursive;
+  --checker:repeating-conic-gradient(var(--ink) 0 25%,var(--white) 0 50%);
+  --pin:420svh;
+  color-scheme:light;
+}
+@media (max-width:700px){:root{--pin:400svh}}
+html,body{background:var(--paper);color:var(--ink)}
+body{font-family:var(--f-body);overflow-x:hidden}
+
+.opening{position:relative;height:420vh;height:var(--pin);z-index:2;pointer-events:none}
+.stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+.inner{position:absolute;inset:0;background:var(--ink);overflow:hidden}
+.grain{position:absolute;inset:0;background-image:var(--noise);mix-blend-mode:overlay;opacity:.5;pointer-events:none;z-index:20}
+
+.top{position:absolute;z-index:15;top:max(16px,env(safe-area-inset-top,0px));left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));display:flex;justify-content:space-between;align-items:center;gap:12px;color:var(--white)}
+.mark{width:clamp(64px,7vw,96px);height:auto;display:block}
+.top small{font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+
+/* camadas da colagem */
+.layer{position:absolute;will-change:transform}
+.px{width:100%;height:100%}
+.bg{inset:-6%;}
+.bg .px{background:url(assets/pista.webp) center 60%/cover no-repeat;filter:saturate(.85) contrast(1.05) brightness(.92)}
+.bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,13,13,.15),rgba(13,13,13,0) 40%,rgba(13,13,13,.35))}
+.bigtype{left:0;top:9%;white-space:nowrap;font-family:var(--f-display);font-size:clamp(120px,24vw,420px);line-height:.85;text-transform:uppercase;color:var(--white);letter-spacing:-.005em}
+.bigtype .r{color:var(--red)}
+.skater{left:50%;bottom:0;height:min(98svh,128vw);aspect-ratio:1040/1300;transform-origin:35% 37.5%}
+.skater img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(3px 0 0 var(--white)) drop-shadow(-3px 0 0 var(--white)) drop-shadow(0 3px 0 var(--white)) drop-shadow(0 -3px 0 var(--white)) drop-shadow(0 30px 40px rgba(0,0,0,.35))}
+@media (max-width:700px){.skater{height:auto;width:112vw}.bigtype{top:16%}}
+@media (max-width:700px){#st1{top:76%!important}#st3{top:86%!important;right:10%!important}}
+.sticker{position:absolute;z-index:8;font-family:var(--f-display);text-transform:uppercase;line-height:1;padding:.35em .55em .3em;box-shadow:3px 3px 0 rgba(13,13,13,.25);font-size:clamp(14px,1.5vw,22px);letter-spacing:.04em}
+.st-1{background:var(--white);color:var(--ink);transform:rotate(-8deg)}
+.st-2{background:var(--red);color:var(--white);transform:rotate(6deg)}
+.st-3{width:clamp(44px,5vw,72px);height:clamp(44px,5vw,72px);padding:0;background:var(--checker);background-size:50% 50%;border:3px solid var(--white);transform:rotate(14deg)}
+.hint{position:absolute;z-index:9;right:max(16px,env(safe-area-inset-right,0px));bottom:clamp(18px,4svh,36px);font-family:var(--f-hand);color:var(--white);font-size:clamp(18px,2vw,24px);white-space:nowrap;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+.credit{position:absolute;z-index:9;left:max(16px,env(safe-area-inset-left,0px));bottom:clamp(18px,4svh,36px);color:var(--white);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;opacity:.8}
+.cap2{position:absolute;z-index:9;left:0;right:0;bottom:clamp(28px,8svh,80px);text-align:center;color:var(--white);opacity:0;padding-inline:16px}
+.cap2 b{display:block;font-family:var(--f-display);font-weight:400;font-size:clamp(36px,6vw,84px);line-height:.95;text-transform:uppercase;text-shadow:0 4px 30px rgba(0,0,0,.5)}
+.cap2 span{font-family:var(--f-hand);color:var(--white);font-size:clamp(18px,2vw,26px)}
+
+/* Venice */
+.venice{inset:0;opacity:0;z-index:10}
+.venice .px{background:url(assets/venice.webp) center/cover no-repeat;filter:saturate(.9)}
+.venice::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(13,13,13,.8),rgba(13,13,13,0) 60%)}
+.vcap{position:absolute;z-index:11;left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));bottom:clamp(28px,7svh,72px);color:var(--white);max-width:760px;opacity:0}
+.vcap .tag{font-family:var(--f-hand);color:var(--red);font-size:clamp(20px,2.2vw,28px)}
+.vcap h2{font-family:var(--f-display);font-weight:400;font-size:clamp(48px,8vw,120px);line-height:.9;text-transform:uppercase;margin:.1em 0 .25em}
+.vcap p{font-size:clamp(16px,1.6vw,20px);line-height:1.4;font-weight:600;max-width:44ch;margin:0}
+.vcap p em{font-style:normal;font-family:var(--f-hand);color:var(--red);font-weight:400}
+
+/* faixas diagonais com a marca */
+.vband{position:absolute;z-index:9;left:50%;top:50%;width:320vmax;display:grid;pointer-events:none;visibility:hidden}
+.vband .tape{display:flex;align-items:center;justify-content:center;gap:.28em;white-space:nowrap;font-family:var(--f-display);text-transform:uppercase;line-height:.86;padding:.12em 0 .06em}
+.vband .strip{height:clamp(18px,2.6vmax,36px);background:var(--checker);background-size:clamp(36px,5.2vmax,72px) clamp(36px,5.2vmax,72px)}
+.vb1{top:40%}.vb2{top:68%}
+.vb1 .tape{background:var(--red);color:var(--white);font-size:clamp(150px,26vmax,380px)}
+.vb1 .tape span{display:inline-block;border-top:.085em solid currentColor;padding-top:.05em}
+.vb2 .tape{background:var(--ink);color:transparent;-webkit-text-stroke:2px var(--white);font-size:clamp(90px,13vmax,200px)}
+.vb2 .tape span.f{color:var(--white);-webkit-text-stroke:0}
+/* marquee */
+.marquee{position:absolute;z-index:12;left:-30vw;right:-30vw;top:50%;transform:translateY(-50%) rotate(-10deg);display:grid;gap:clamp(8px,1.4svh,16px);opacity:0;pointer-events:none}
+.mq-bg{position:absolute;inset:0;z-index:11;background:var(--paper);opacity:0}
+.row{display:flex;white-space:nowrap;font-family:var(--f-display);font-size:clamp(68px,11vw,190px);line-height:.95;text-transform:uppercase;will-change:transform}
+.row span{padding-right:.3em}
+.row .r{color:var(--red)}
+.row.vrow{background:var(--red);color:var(--white);font-size:clamp(130px,25vw,340px);line-height:.86;padding:.1em 0 .05em}
+.row.vrow span{display:inline-block;border-top:.085em solid currentColor;padding-top:.05em;margin-right:.3em;padding-right:0}
+.row .o{color:transparent;-webkit-text-stroke:2px var(--ink)}
+.strip{height:clamp(26px,3.4vw,44px);background:var(--checker);background-size:calc(clamp(26px,3.4vw,44px)) calc(clamp(26px,3.4vw,44px));will-change:transform}
+
+.cells{position:absolute;inset:0;z-index:18;pointer-events:none}
+.cells i{position:absolute;display:block;transform:scale(0)}
+.cells i.b,.lgrid i.b{background:var(--ink)}
+.cells i.w,.lgrid i.w{background:var(--white)}
+
+/* loader */
+.loader{position:fixed;inset:0;z-index:100}
+.lgrid i{position:absolute;display:block}
+.lbox{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--paper);border:3px solid var(--ink);padding:18px 26px 14px;text-align:center;box-shadow:8px 8px 0 var(--red)}
+.lbox b{display:block;font-family:var(--f-display);font-weight:400;font-size:clamp(56px,9vw,104px);line-height:.9;font-variant-numeric:tabular-nums}
+.lbox small{display:block;margin-top:6px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+
+/* vitrine */
+.showcase{position:relative;z-index:1;margin-top:-100vh;margin-top:-100svh;background:var(--paper);min-height:100svh}
+.showcase-inner{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:clamp(72px,14svh,140px) 96px}
+.eyebrow{font-family:var(--f-hand);font-size:24px;color:var(--red)}
+.showcase h2{font-family:var(--f-display);font-weight:400;font-size:clamp(48px,8vw,120px);line-height:.92;text-transform:uppercase;margin:.15em 0 .5em;text-wrap:balance;max-width:14ch}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.chip{font:600 14px/1 var(--f-body);padding:10px 14px;border:2px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer;text-transform:uppercase;letter-spacing:.04em}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--white)}
+.chip:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.count{font-family:var(--f-hand);color:var(--red);font-size:20px;margin-left:auto;align-self:center}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+@media (max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:460px){.grid{gap:12px}}
+.card{border:2px solid var(--ink);background:var(--white);display:grid;grid-template-rows:auto 1fr;transition:transform .18s,box-shadow .18s;cursor:pointer}
+.card:hover,.card:focus-visible{transform:translate(-3px,-3px);box-shadow:6px 6px 0 var(--ink);outline:none}
+.card[hidden]{display:none}
+.shot{aspect-ratio:4/3;max-width:100%;display:grid;place-items:center;border-bottom:2px solid var(--ink);position:relative;overflow:hidden;transition:background .25s;background:#ece8df}
+.shot::before{content:"";position:absolute;left:0;right:0;bottom:0;height:14%;background:var(--checker);background-size:16px 16px;opacity:.9}
+.card:hover .shot,.card:focus-visible .shot{background:var(--red)}
+.shot img{position:relative;width:84%;height:auto;max-height:78%;object-fit:contain;transition:transform .35s cubic-bezier(.3,1.6,.5,1);filter:drop-shadow(0 14px 12px rgba(0,0,0,.18))}
+.card:hover .shot img,.card:focus-visible .shot img{transform:translateY(-10px) rotate(-6deg)}
+.year{position:absolute;right:10px;top:8px;font-family:var(--f-display);font-size:clamp(28px,3.4vw,46px);line-height:1;color:var(--ink);opacity:.14;transition:opacity .25s,color .25s}
+.card:hover .year,.card:focus-visible .year{opacity:1;color:var(--white)}
+.meta{padding:14px 14px 16px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 8px;min-width:0}
+.meta h3{font-family:var(--f-display);font-weight:400;font-size:clamp(22px,2.6vw,34px);text-transform:uppercase;margin:0;line-height:1}
+.meta p{margin:0;font-size:14px;font-weight:600;opacity:.6}
+.legal{margin-top:48px;font-size:13px;opacity:.6;max-width:70ch}
+
+.rm .opening{height:400vh;height:400svh}
+.rm .showcase{margin-top:0}
+.rm .inner{transition:opacity .3s}
+.rm .inner.fading{opacity:0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style>
+
+<div class="loader" id="loader" aria-hidden="true"><div class="lgrid" id="lgrid"></div><div class="lbox" id="lbox"><b id="lnum">000</b><small>Off The Wall · Since 1966</small></div></div>
+
+<section class="opening" id="opening" aria-label="Abertura: Off The Wall">
+  <div class="stage" id="stage">
+    <div class="inner" id="inner">
+      <div class="layer bg" id="bg"><div class="px" data-depth="0.3"></div></div>
+      <div class="layer bigtype" id="bigtype" aria-hidden="true"><div class="px" data-depth="0.6">Off The <span class="r">Wall</span> · Off The <span class="r">Wall</span></div></div>
+      <div class="layer skater" id="skater"><div class="px" data-depth="1.1"><img src="assets/skatista.webp" alt="Skatista segurando o shape com o logo Vans virado para a câmera" width="1040" height="1300"></div></div>
+      <div class="sticker st-1" id="st1" style="left:6%;top:56%">Since 1966</div>
+      <div class="sticker st-2" id="st2" style="right:7%;top:14%">Porto Alegre, RS</div>
+      <div class="sticker st-3" id="st3" style="right:12%;top:62%" aria-hidden="true"></div>
+      <div class="vband vb2" id="vb2" aria-hidden="true"><div class="strip"></div><div class="tape"><span>Off The Wall</span><span class="f">Since 1966</span><span>Off The Wall</span><span class="f">Since 1966</span><span>Off The Wall</span><span class="f">Since 1966</span><span>Off The Wall</span><span class="f">Since 1966</span></div><div class="strip"></div></div>
+      <div class="vband vb1" id="vb1" aria-hidden="true"><div class="strip"></div><div class="tape"><span>Vans</span><span>Vans</span><span>Vans</span><span>Vans</span><span>Vans</span><span>Vans</span><span>Vans</span></div><div class="strip"></div></div>
+
+      <div class="layer venice" id="venice"><div class="px"></div></div>
+      <div class="vcap" id="vcap">
+        <div class="tag">Venice, Califórnia</div>
+        <h2>De onde veio o nome</h2>
+        <p>Nos anos 70, skatistas de Venice esvaziavam piscinas e andavam nas paredes. Sair voando pela borda ganhou um nome: <em>off the wall.</em></p>
+      </div>
+
+      <div class="mq-bg" id="mqbg"></div>
+      <div class="marquee" id="marquee">
+        <div class="row" data-dir="-1"><span>Off</span><span class="o">The</span><span class="r">Wall</span><span>Off</span><span class="o">The</span><span class="r">Wall</span><span>Off</span><span class="o">The</span><span class="r">Wall</span></div>
+        <div class="strip" data-dir="1"></div>
+        <div class="row vrow" data-dir="-1"><span>Vans</span><span>Vans</span><span>Vans</span><span>Vans</span><span>Vans</span><span>Vans</span><span>Vans</span><span>Vans</span></div>
+        <div class="strip" data-dir="-1"></div>
+        <div class="row" data-dir="1"><span class="o">Since</span><span>1966</span><span class="o">Porto Alegre,</span><span>RS</span><span class="o">Since</span><span>1966</span><span class="o">Porto Alegre,</span><span>RS</span></div>
+        <div class="strip" data-dir="-1"></div>
+        <div class="row" data-dir="-1"><span>Authentic</span><span class="r">Era</span><span class="o">Old Skool</span><span>Sk8-Hi</span><span>Authentic</span><span class="r">Era</span><span class="o">Old Skool</span><span>Sk8-Hi</span></div>
+      </div>
+
+      <div class="top">
+        <svg class="mark" viewBox="0 0 440 150" role="img" aria-label="Vans"><rect x="0" y="0" width="440" height="16" fill="currentColor"/><text x="220" y="146" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="128" letter-spacing="10" fill="currentColor">VANS</text></svg>
+      </div>
+      <div class="hint" id="hint">role ↓</div>
+      <div class="credit" id="credit">Off The Wall · Since 1966</div>
+      <p class="sr">Off The Wall. Since 1966. Porto Alegre, Rio Grande do Sul.</p>
+      <div class="grain"></div>
+    </div>
+    <div class="cells" id="cells" aria-hidden="true"></div>
+  </div>
+</section>
+
+<section class="showcase" id="showcase" aria-labelledby="vitrineTitle">
+  <div class="showcase-inner">
+    <div class="eyebrow">a vitrine</div>
+    <h2 id="vitrineTitle">Clássicos que nasceram no concreto</h2>
+    <div class="chips" role="group" aria-label="Filtrar modelos">
+      <button class="chip" type="button" data-f="all" aria-pressed="true">Todos</button>
+      <button class="chip" type="button" data-f="baixo" aria-pressed="false">Cano baixo</button>
+      <button class="chip" type="button" data-f="alto" aria-pressed="false">Cano alto</button>
+      <button class="chip" type="button" data-f="slip" aria-pressed="false">Sem cadarço</button>
+      <span class="count" id="count" aria-live="polite">6 modelos</span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) document.documentElement.classList.add('rm');
+  gsap.registerPlugin(ScrollTrigger);
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+
+  /* ---------- vitrine ---------- */
+  const models = [
+    ['Old Skool', 'O primeiro com Sidestripe', 'oldskool', '1977', 'baixo'],
+    ['Classic Slip-On', 'O quadriculado', 'slipon', '1982', 'slip'],
+    ['Authentic', 'O primeiro modelo, #44', 'authentic', '1966', 'baixo'],
+    ['Sk8-Hi', 'Nasceu como Style 38', 'sk8hi', '1978', 'alto'],
+    ['Skate Slip-On', 'Sola gum', 'skateslipon', '', 'slip'],
+    ['Super Lowpro', 'Perfil baixo', 'lowpro', '', 'baixo']];
+  $('grid').innerHTML = models.map(([n, d, f, y, t]) => `<article class="card" tabindex="0" data-t="${t}"><div class="shot">${y ? `<span class="year">${y}</span>` : ''}<img src="assets/${f}.webp" alt="Tênis Vans ${n}" loading="lazy"></div><div class="meta"><h3>${n}</h3><p>${d}</p></div></article>`).join('');
+  document.querySelectorAll('.chip').forEach(ch => ch.addEventListener('click', () => {
+    const f = ch.dataset.f; document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', c === ch));
+    let n = 0; document.querySelectorAll('.card').forEach(c => { const show = f === 'all' || c.dataset.t === f; c.hidden = !show; if (show) n++; });
+    $('count').textContent = n === 1 ? '1 modelo' : `${n} modelos`;
+    if (!reduce) gsap.fromTo('.card:not([hidden])', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, stagger: 0.05 });
+    ScrollTrigger.refresh();
+  }));
+
+  /* ---------- grão ---------- */
+  const nc = document.createElement('canvas'); nc.width = nc.height = 180; const nx = nc.getContext('2d'); const nd = nx.createImageData(180, 180);
+  for (let i = 0; i < nd.data.length; i += 4) { const v = Math.random() * 255; nd.data[i] = nd.data[i + 1] = nd.data[i + 2] = v; nd.data[i + 3] = 50; }
+  nx.putImageData(nd, 0, 0); document.documentElement.style.setProperty('--noise', `url(${nc.toDataURL()})`);
+
+  /* ---------- loader ---------- */
+  (() => {
+    const L = $('loader'), g = $('lgrid'), W = innerWidth, H = innerHeight, cols = W < 700 ? 6 : 10, c = W / cols, rows = Math.ceil(H / c);
+    for (let r = 0; r < rows; r++) for (let k = 0; k < cols; k++) { const el = document.createElement('i'); el.className = (r + k) % 2 ? 'w' : 'b'; el.style.cssText = `left:${k * c}px;top:${r * c}px;width:${c + 1}px;height:${c + 1}px`; g.appendChild(el); }
+    document.documentElement.style.overflow = 'hidden';
+    const done = () => { document.documentElement.style.overflow = ''; L.remove(); ScrollTrigger.refresh(); };
+    const imgs = ['assets/pista.webp', 'assets/skatista.webp'].map(src => new Promise(r => { const i = new Image(); i.onload = i.onerror = r; i.src = src; }));
+    const ready = Promise.race([Promise.all([document.fonts ? document.fonts.ready : 0, ...imgs]), new Promise(r => setTimeout(r, 4000))]);
+    if (reduce) { ready.then(() => gsap.to(L, { opacity: 0, duration: 0.3, onComplete: done })); return; }
+    const o = { v: 0 };
+    const count = gsap.to(o, { v: 100, duration: 1.1, ease: 'power2.inOut', onUpdate: () => { $('lnum').textContent = String(Math.round(o.v)).padStart(3, '0'); } });
+    Promise.all([ready, count.then()]).then(() => {
+      gsap.timeline({ onComplete: done })
+        .to('#lbox', { scale: 0.8, opacity: 0, duration: 0.25, ease: 'power2.in' })
+        .to('#lgrid i', { scale: 0, duration: 0.4, ease: 'power2.in', stagger: { grid: [rows, cols], from: 'end', amount: 0.6 } }, '-=0.05')
+        .from('#skater .px', { yPercent: 18, duration: 0.9, ease: 'power3.out' }, '-=0.45')
+        .from('#bigtype .px', { xPercent: 12, opacity: 0, duration: 0.9, ease: 'power3.out' }, '<')
+        .from(['#st1', '#st2', '#st3'], { scale: 0, rotation: '+=40', duration: 0.5, ease: 'back.out(2)', stagger: 0.08 }, '-=0.4');
+    });
+  })();
+
+  /* ---------- parallax do mouse (desktop) ---------- */
+  if (!reduce && matchMedia('(pointer:fine)').matches) {
+    const layers = [...document.querySelectorAll('.px[data-depth]')].map(el => ({ d: +el.dataset.depth, x: gsap.quickTo(el, 'x', { duration: 0.8, ease: 'power3' }), y: gsap.quickTo(el, 'y', { duration: 0.8, ease: 'power3' }) }));
+    addEventListener('pointermove', e => {
+      const nx = e.clientX / innerWidth - 0.5, ny = e.clientY / innerHeight - 0.5;
+      layers.forEach(l => { l.x(-nx * 28 * l.d); l.y(-ny * 18 * l.d); });
+    });
+  }
+
+  /* ---------- quadriculado (cobre e revela) ---------- */
+  const stage = $('stage'), inner = $('inner'); const S = { cover: 0, reveal: 0 }; let cells = [];
+  function buildCells() {
+    const box = $('cells'); box.innerHTML = ''; cells = [];
+    const W = stage.clientWidth, H = stage.clientHeight, cols = W < 700 ? 6 : 10, c = W / cols, rows = Math.ceil(H / c), maxd = cols + rows - 2;
+    for (let r = 0; r < rows; r++) for (let k = 0; k < cols; k++) {
+      const el = document.createElement('i'); el.className = (r + k) % 2 ? 'w' : 'b';
+      el.style.cssText = `left:${k * c}px;top:${r * c}px;width:${c + 1}px;height:${c + 1}px`; box.appendChild(el); cells.push({ el, d: (r + k) / maxd });
+    }
+    paintCells();
+  }
+  function paintCells() {
+    cells.forEach(({ el, d }) => { const a = clamp(S.cover * 1.7 - d * 0.7), b = clamp(1 - (S.reveal * 1.7 - (1 - d) * 0.7)); el.style.transform = `scale(${Math.min(a, b)})`; });
+    inner.style.visibility = S.cover >= 0.999 ? 'hidden' : '';
+  }
+
+  /* ---------- timeline mestre (unidades = % do scroll, 0–80) ---------- */
+  gsap.set('#skater', { xPercent: -50 }); gsap.set(['#vb1', '#vb2'], { xPercent: -50, yPercent: -50 });
+  const tl = gsap.timeline({ paused: true, defaults: { ease: 'none' } });
+  tl.to('#hint', { opacity: 0, duration: 2 }, 1)
+    // colagem: cada camada anda numa velocidade
+    .fromTo('#bg', { yPercent: 0, scale: 1.05 }, { yPercent: -4, scale: 1.15, duration: 28 }, 0)
+    .fromTo('#bigtype', { xPercent: 0 }, { xPercent: -28, duration: 40 }, 0)
+    .fromTo('#skater', { scale: 1 }, { scale: 1.08, duration: 26 }, 0)
+    .to('#st1', { y: '-60vh', rotation: -30, autoAlpha: 0, duration: 12 }, 3)
+    .to('#st2', { y: '-40vh', rotation: 25, autoAlpha: 0, duration: 10 }, 4)
+    .to('#st3', { y: '-70vh', rotation: 80, autoAlpha: 0, duration: 12 }, 5)
+    .to('#credit', { opacity: 0, duration: 3 }, 6)
+    // zoom no shape: o logo VANS ocupa a tela
+    .to('#skater', { scale: () => (innerWidth < 700 ? 3.2 : 3.6), duration: 9, ease: 'power3.inOut' }, 24)
+    .to('#bigtype', { opacity: 0, duration: 5 }, 24)
+    .to('#bg', { opacity: 0.25, duration: 8 }, 26)
+    // faixas VANS cruzando na diagonal
+    .set(['#vb1', '#vb2'], { visibility: 'visible' }, 35)
+    .fromTo('#vb2', { x: () => -innerWidth * 0.9, rotation: 9 }, { x: () => innerWidth * 0.5, duration: 13 }, 35)
+    .fromTo('#vb1', { x: () => innerWidth * 1.1, rotation: -15, scale: 1.25 }, { x: () => -innerWidth * 0.75, scale: 1, duration: 12 }, 36)
+    .to('#skater', { opacity: 0.55, duration: 4 }, 37)
+    // Venice entra limpando de baixo pra cima
+    .to('#skater', { opacity: 0, duration: 2 }, 47)
+    .fromTo('#venice', { opacity: 1, clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 4, ease: 'power2.inOut' }, 45)
+    .set(['#vb1', '#vb2'], { visibility: 'hidden' }, 49)
+    .fromTo('#venice .px', { scale: 1.3 }, { scale: 1.02, duration: 14 }, 45)
+    .fromTo('#vcap', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 3 }, 48)
+    .to(['#vcap'], { opacity: 0, duration: 2 }, 55)
+    // marquee
+    .to('#mqbg', { opacity: 1, duration: 3 }, 57)
+    .to('.top', { color: '#0d0d0d', duration: 2 }, 57)
+    .to('#marquee', { opacity: 1, duration: 3 }, 58);
+  gsap.utils.toArray('#marquee [data-dir]').forEach(el => { const d = +el.dataset.dir; tl.fromTo(el, { xPercent: d < 0 ? 0 : -30 }, { xPercent: d < 0 ? -30 : 0, duration: 20 }, 57); });
+  tl.to(S, { cover: 1, duration: 6, onUpdate: paintCells }, 74).set({}, {}, 80);
+
+  addEventListener('resize', buildCells); buildCells();
+
+  if (!reduce) {
+    ScrollTrigger.create({ trigger: '#opening', start: 'top top', end: () => '+=' + ($('opening').offsetHeight - 2 * stage.offsetHeight), scrub: 0.6, animation: tl, invalidateOnRefresh: true });
+    ScrollTrigger.create({ trigger: '#showcase', start: 'top bottom', end: 'top top', scrub: true,
+      onUpdate: s => { S.reveal = s.progress; paintCells(); }, onRefresh: s => { S.reveal = s.progress; paintCells(); } });
+  } else {
+    const states = [2, 40, 52, 66]; let cur = -1;
+    const pick = () => {
+      const i = Math.max(0, Math.min(states.length - 1, Math.floor((scrollY - $('opening').offsetTop) / stage.offsetHeight)));
+      if (i === cur) return; cur = i; inner.classList.add('fading');
+      setTimeout(() => { tl.progress(states[i] / 80); inner.classList.remove('fading'); }, 200);
+    };
+    addEventListener('scroll', pick, { passive: true }); pick();
+  }
+})();
+</script>
+
+</body>
+</html>
